@@ -8,11 +8,11 @@ Hats are one of the most popular item cateogires flipped on Ebay. Price Finder i
 
 ### Prerequisites
 
-## Ebay Developer Account
+#### Ebay Developer Account
 To use Price Finder you need to have an approved eBay developer account. This step won't be neccessary in the future when the backend of the project is hosted.
 Navigate to [https://developer.ebay.com/develop](https://developer.ebay.com/develop) and follow the instructions for setting up an account.
 
-## Chrome Webdriver
+#### Chrome Webdriver
 [Chrome webdriver](https://googlechromelabs.github.io/chrome-for-testing/) is needed inorder for the project to webscrape Ebay's website and aquire images of hat lots to analyze. 
 * npm
   ```sh
