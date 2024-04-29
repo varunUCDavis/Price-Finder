@@ -1,0 +1,24 @@
+# getLots.py paths
+ # path to chrome webdriver
+chrome_driver_path: # eg- "/Users/varunwadhwa/Downloads/chromedriver-mac-arm64/chromedriver"
+
+#model.py paths
+# path to best.pt
+model_path: # eg- "/Users/varunwadhwa/Desktop/ebayScrapper2/runs/detect/train/weights/best.pt"
+
+#priceFinder.py
+# ebay api api key info
+client_id: 
+client_secret: 
+oauth_token: 
+
+
+# train.py paths 
+# absolute path to project folder
+path: # eg- "/Users/varunwadhwa/Desktop/Price-Finder/runs/detect/train/weights/best.pt"
+train: train/images  # train images (relative to 'path')
+val: valid/images  # val images (relative to 'path')
+
+# Classes for train.py
+names:
+  0: hat
