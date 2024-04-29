@@ -3,32 +3,17 @@
 ### (insert emoji) Determine the resale value of hat lots with the help of computer vision.
 Hats are one of the most popular item cateogires flipped on Ebay. Price Finder is an advanced computer vision application that leverages the YoloV8 object detection model, webscraping, and Ebay's developer API to accurately determine the potential resale value of individual hats within bulk hat lots found on Ebay. By utilizing Price Finder, ebay sellers can automate part of their sourcing workflow and increase their daily listing and sale rate. 
 
-### Built With
-
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
-* [![Vue][Vue.js]][Vue-url]
-* [![Angular][Angular.io]][Angular-url]
-* [![Svelte][Svelte.dev]][Svelte-url]
-* [![Laravel][Laravel.com]][Laravel-url]
-* [![Bootstrap][Bootstrap.com]][Bootstrap-url]
-* [![JQuery][JQuery.com]][JQuery-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
+## Ebay Developer Account
+To use Price Finder you need to have an approved eBay developer account. This step won't be neccessary in the future when the backend of the project is hosted.
+Navigate to [https://developer.ebay.com/develop](https://developer.ebay.com/develop) and follow the instructions for setting up an account.
+
+## Chrome Webdriver
+[Chrome webdriver](https://googlechromelabs.github.io/chrome-for-testing/) is needed inorder for the project to webscrape Ebay's website and aquire images of hat lots to analyze. 
 * npm
   ```sh
   npm install npm@latest -g
