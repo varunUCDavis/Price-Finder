@@ -19,23 +19,33 @@ To use Price Finder you need to have an approved eBay developer account. This st
 #### Chrome Webdriver
 [Chrome webdriver](https://googlechromelabs.github.io/chrome-for-testing/) is needed inorder for the project to webscrape Ebay's website and aquire images of hat lots to analyze. After downloading the webdriver from the link above, unzip the file and copy down the absolute path to the webdriver. For example, "/Users/varunwadhwa/Downloads/chromedriver-mac-arm64/chromedriver"
 
-### Installation
+### Installing and Running the Project
 
 1. Clone the repo
-   ```sh
-   git clone https://github.com/your_username_/Project-Name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
+   ```sh 
+   git clone https://github.com/varunUCDavis/Price-Finder.git
    ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+2. Modify the following fields in `config.yaml` with your API and system path information 
+   ```yaml
+   chrome_driver_path: 'ENTER YOUR WEBDRIVER PATH'
+   path: 'ENTER THE ABSOLUTE PATH TO YOUR PROJECT FOLDER'
 
+   client_id: "ENTER YOUR CLIENT ID"
+   client_sercret: "ENTER YOUR CLIENT SECRET"
+   oauth_token: "ENTER YOUR OAUTH USER TOKEN"
+   ```
+3. Run the main.py script
+   ```sh
+   python main.py
+   ```
+#### Optional
+The model being used to detect individual hats within the bulk lot images has already been trained. However, if you would like to add additional training data and retrain the model, follow these steps.
+1) Add your training imgages and labels to "train/images" and "train/labels" respectively
+2) Run the train.py script
+   ```sh
+   python train.py
+   ```
 
 
 
@@ -49,7 +59,7 @@ To use Price Finder you need to have an approved eBay developer account. This st
 
 
 # 🔑 Key Features
-## Player Tracking
+## Individual Hat Detection
 The project employs object detection and tracking algorithms to identify and track the positions of players on the field throughout the game.
 - Uses YOLOv8 Object Detection: Bounding box, classes, and segmentation
 
@@ -58,7 +68,7 @@ The project employs object detection and tracking algorithms to identify and tra
 
 *Note: Referee and Goalie are ignored*
 
-## Team Color Segmentation
+## Aquiring Hat Lot Listings Through Webscrapping
 The system also analyzes the colors of the player jerseys to distinguish between teams. By detecting the dominant colors on the players' uniforms, the algorithm can categorize them into teams.
 
 - Uses bounding box to determine which way the player is facing
@@ -69,7 +79,7 @@ The system also analyzes the colors of the player jerseys to distinguish between
 ![Screenshot 2023-08-29 at 3 34 20 PM](https://github.com/SACUCD/SoccerOffsideTracker/assets/54915593/997e5746-d37a-40d5-bad7-ed487c5488ac)
 ***The smaller square represents the box used to determine the jersey color***
 
-## Perspective Transform onto 2D Map
+## Estimating the Price of Individual Hats
 The most important part of this project is implementing perspective transform to get information on the actual distance down the field players are. This information is crucial for making offside determinations.
 
 - Uses OpenCV's perspective transform
