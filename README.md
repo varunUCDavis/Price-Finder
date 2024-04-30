@@ -10,21 +10,18 @@ Hats are one of the most popular item cateogires flipped on Ebay. Price Finder i
 
 #### Ebay Developer Account
 To use Price Finder you need to have an approved eBay developer account. This step won't be neccessary in the future when the backend of the project is hosted.
-Navigate to [https://developer.ebay.com/develop](https://developer.ebay.com/develop) and follow the instructions for setting up an account.
+
+1) Navigate to [https://developer.ebay.com/develop](https://developer.ebay.com/develop) and follow the instructions for setting up an account.
+2) After creating your account follow [these steps](https://developer.ebay.com/api-docs/static/gs_create-the-ebay-api-keysets.html) to create an API keyset
+3) Navigate to [Application keys](https://developer.ebay.com/my/keys) and copy down your Client ID and Client Secret<img src="https://drive.google.com/uc?export=view&id=1qTAbLir7zu1EqyH8BemNyskQCasb_Ghe" width="600">
+4) Navigate to [User Access Tokens](https://developer.ebay.com/my/auth/?env=production&index=0) create a user token, and copy down your OAuth User Token <img src="https://drive.google.com/uc?export=view&id=1_N4pu1lnVVu9K9EoqSq0qN974eTzk5wA" width="800">
 
 #### Chrome Webdriver
-[Chrome webdriver](https://googlechromelabs.github.io/chrome-for-testing/) is needed inorder for the project to webscrape Ebay's website and aquire images of hat lots to analyze. 
-* npm
-  ```sh
-  npm install npm@latest -g
-  ```
+[Chrome webdriver](https://googlechromelabs.github.io/chrome-for-testing/) is needed inorder for the project to webscrape Ebay's website and aquire images of hat lots to analyze. After downloading the webdriver from the link above, unzip the file and copy down the absolute path to the webdriver. For example, "/Users/varunwadhwa/Downloads/chromedriver-mac-arm64/chromedriver"
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
    git clone https://github.com/your_username_/Project-Name.git
    ```
