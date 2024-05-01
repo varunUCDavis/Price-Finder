@@ -187,17 +187,3 @@ class PriceFinder:
             print("Failed to search by image. Status code:", response.status_code, "Response:", response.text)
 ```
 
-# 🪴 Areas of Improvement
-- Reliability: The project could always have higher accuracy and reliability in offside decisions. It is only as accurate as the points it is given for perspective transform.
-- Real-Time Video Analysis: The system would be more useful if it could process live video feeds from soccer matches, enabling real-time offside detection during gameplay.
-- Pitch Detection: If the system could automatically detect and classify points on the field, the process would be entirely automated. This is a limitation created by non-fixed camera angles and could be solved with a fixed view of the field.
-- Deep Sort: If players could be tracked throughout the game, we could implement automatic statistics on the amount of time spent offside.
-
-# 🚀 Further Uses
-- Team Formation Analysis: The project can further analyze the players' positions to determine the formation of each team during a particular play. This information can be valuable for understanding the dynamics of the game and how the offside decision impacts team strategies.
-- Player Jersey Number Recognition: The system could utilize Optical Character Recognition (OCR) techniques to read the jersey numbers of players on the field. This allows the identification of individual players and track their movement and time spent offside.
-
-# 💻  Technology
-- OpenCV
-- NumPy
-- YoloV8
