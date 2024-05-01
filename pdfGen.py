@@ -49,6 +49,7 @@ class GenPDF:
             lot_image = lot[0]
             lot_size = lot[1]
             lot_link = lot[2]
+            lot_price = lot[4]
             cropped_hat_data = lot[3]
             if cls.y_pos + cls.LOTWIDTH + 15 > 255:
                 cls.pdf.add_page()
@@ -58,6 +59,11 @@ class GenPDF:
             cls.add_image_from_bytes(lot_image,x=cls.LOTX,y=cls.y_pos,w=cls.LOTWIDTH)
             cls.y_pos += cls.LOTWIDTH
             cls.x_pos = 99
+            # display price
+            cls.pdf.set_font('Arial', 'B', cls.LINKFONTSZ)
+            cls.pdf.set_xy(cls.x_pos,cls.y_pos)
+            cls.pdf.cell(0,10, f"${round(lot_price,2)}", ln=True, link=lot_link)
+            cls.y_pos += 6
             cls.pdf.set_xy(cls.x_pos,cls.y_pos)
             cls.pdf.set_font('Arial', 'B', cls.LINKFONTSZ)
             cls.pdf.cell(0,10, "Visit", ln=True, link=lot_link)
@@ -89,7 +95,7 @@ class GenPDF:
 
                 cls.pdf.set_font('Arial', '', cls.PRICEFONTSZ)
                 cls.pdf.set_xy(cls.x_pos + cls.BOXWIDTH/2 ,cls.y_pos + 28)
-                cls.pdf.cell(cls.BOXWIDTH/2,cls.TEXTHEIGHT, f"${round(price/lot_size, 2)}")
+                cls.pdf.cell(cls.BOXWIDTH/2,cls.TEXTHEIGHT, f"${round(price - lot_price/lot_size, 2)}")
 
                 cls.pdf.rect(cls.x_pos-5, cls.y_pos-5, cls.BOXWIDTH, cls.BOXHEIGHT)
                 cls.x_pos += cls.ITEMMARGIN

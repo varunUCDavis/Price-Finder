@@ -20,7 +20,7 @@ with open("config.yaml", 'r') as file:
 lot_dict = Lots.getLots()
 
 # model path
-model_path = config['model_path']
+model_path = config['path']+config['model_path']
 model = YOLO(model_path)
 
 # 2d list to hold cropped hat images for each hat lot image
@@ -30,9 +30,10 @@ lot_names = list(lot_dict.keys())
 values = list(lot_dict.values())
 images = [item[0] for item in values]
 links = [item[1] for item in values]
+lot_prices = [item[2] for item in values]
 #breakpoint()
 results = model.predict(source=images)
-for r,image,link in zip(results,images,links):
+for r,image,link,lot_price in zip(results,images,links,lot_prices):
     hats = []
     image = np.ascontiguousarray(np.array(image))
     annotator = Annotator(image)
@@ -58,7 +59,7 @@ for r,image,link in zip(results,images,links):
             price = PriceFinder.find_prices(tmp)
             hats.append([cropped_image,price])
     if len(hats) > 0:
-        data.append([image, num_hats, link, hats])
+        data.append([image, num_hats, link, hats, lot_price])
 #breakpoint()
 GenPDF.generatePDF(data)
 

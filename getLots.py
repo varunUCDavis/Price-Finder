@@ -10,7 +10,7 @@ import yaml
 
 class Lots:
 
-    EBAYLINK = "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p4432023.m570.l1312&_nkw=sports+hat+lot&_sacat=0"
+    EBAYLINK = "https://www.ebay.com/sch/i.html?_from=R40&_trksid=p4432023.m570.l1312&_nkw=sports+hat+lot&_sacat=0&_pgn=2"
     #SAVEDIR = "HatLots"
     NUMIMAGES = 5
 
@@ -40,14 +40,23 @@ class Lots:
             # Now on the listing page, wait for the main image to load and then scrape it
             main_image = cls.driver.find_element(By.CSS_SELECTOR, "div.ux-image-carousel-item.image-treatment.active.image img")
             src = main_image.get_attribute('src')
-
+            item_price = cls.driver.find_element(By.CSS_SELECTOR, "div.x-price-primary span").text
+            dollar_index = item_price.find('$')
+            item_price = float(item_price[dollar_index+1:])
+            shipping_price = cls.driver.find_element(By.CSS_SELECTOR, "div.vim.d-shipping-minview.mar-t-20").find_element(By.CSS_SELECTOR, "div.ux-labels-values__values-content").find_element(By.CSS_SELECTOR, "span.ux-textspans").text
+            if "Free" in shipping_price:
+                shipping_price = 0
+            else:
+                dollar_index = shipping_price.find('$')
+                shipping_price = float(shipping_price[dollar_index+1:])
+            item_price += shipping_price
             # Download the image content
             response = requests.get(src)
             if response.status_code == 200:
                 # Load the image content into an object that PIL can open
                 image = Image.open(BytesIO(response.content)).convert('RGB')
                 img_name = f"Lot{idx+1}"
-                items[img_name] = [image, listing_href]
+                items[img_name] = [image, listing_href, item_price]
 
             # Go back to the search results page before proceeding to the next listing
             cls.driver.back()
