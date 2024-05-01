@@ -1,15 +1,17 @@
-# Price-Finder (insert emoji here)
+# Price-Finder 🤑
 
-### (insert emoji) Determine the resale value of hat lots with the help of computer vision.
+### Determine the resale value of hat lots with the help of computer vision 🧢
 Hats are one of the most popular item cateogires flipped on Ebay. Price Finder is an advanced computer vision application that leverages the YoloV8 object detection model, webscraping, and Ebay's developer API to accurately determine the potential resale value of individual hats within bulk hat lots found on Ebay. By utilizing Price Finder, ebay sellers can automate part of their sourcing workflow and increase their daily listing and sale rate. 
 #### Sample Output
+![Image](https://drive.google.com/uc?export=view&id=1EWM1WPv4-tdzMwAK6SoxKyi9xLwHz_RW)
+
 
 <!-- GETTING STARTED -->
 ## Getting Started
 
 ### Prerequisites
 
-#### Ebay Developer Account
+#### Ebay Developer Account 
 To use Price Finder you need to have an approved eBay developer account. This step won't be neccessary in the future when the backend of the project is hosted.
 
 1) Navigate to [https://developer.ebay.com/develop](https://developer.ebay.com/develop) and follow the instructions for setting up an account.
