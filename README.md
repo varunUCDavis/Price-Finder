@@ -2,6 +2,7 @@
 
 ### (insert emoji) Determine the resale value of hat lots with the help of computer vision.
 Hats are one of the most popular item cateogires flipped on Ebay. Price Finder is an advanced computer vision application that leverages the YoloV8 object detection model, webscraping, and Ebay's developer API to accurately determine the potential resale value of individual hats within bulk hat lots found on Ebay. By utilizing Price Finder, ebay sellers can automate part of their sourcing workflow and increase their daily listing and sale rate. 
+#### Sample Output
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -59,35 +60,130 @@ The model being used to detect individual hats within the bulk lot images has al
 
 
 # 🔑 Key Features
-## Individual Hat Detection
-The project employs object detection and tracking algorithms to identify and track the positions of players on the field throughout the game.
-- Uses YOLOv8 Object Detection: Bounding box, classes, and segmentation
-
-![Screenshot 2023-08-29 at 3 30 41 PM](https://github.com/SACUCD/SoccerOffsideTracker/assets/54915593/6a5fa29a-cd3d-4efa-b6dc-80440241b970)
-***The small circle represents each players furthest body part. This is the point that is used for determining offsides***
-
-*Note: Referee and Goalie are ignored*
-
 ## Aquiring Hat Lot Listings Through Webscrapping
-The system also analyzes the colors of the player jerseys to distinguish between teams. By detecting the dominant colors on the players' uniforms, the algorithm can categorize them into teams.
+Inorder to obtain images of bulk lot hats to analyze for potential resale value, Selenium and Chrome Driver were used to search for hat lots on ebays website, and scrape the results page. 
+```py
+def getLots(cls) -> dict:
+  items = {}
+  cls.driver.get(cls.EBAYLINK)
+  # Get all listing elements
+  # Wait for the page to load and the elements to be present
+  wait = WebDriverWait(cls.driver, 10)
+  wait.until(EC.presence_of_element_located((By.ID, 'srp-river-results')))
+  listings = cls.driver.find_elements(By.CSS_SELECTOR, "#srp-river-results .s-item__link")
+  listing_hrefs = [listing.get_attribute('href') for listing in listings]
 
-- Uses bounding box to determine which way the player is facing
-- Creates a smaller box at the most likely spot of the player's jersey
-- Gets the average color in the smaller box
-- Uses euclidean distance to group players into 3 groups: team1, team2, and team3 (referees and goalkeepers)
+  # Loop through each listing link
+  for idx, listing_href in enumerate(listing_hrefs[:cls.NUMIMAGES]):  # Limiting to the first 10 listings for this example
+      # Open the listing page
+      cls.driver.get(listing_href)
+      
+      # Now on the listing page, wait for the main image to load and then scrape it
+      main_image = cls.driver.find_element(By.CSS_SELECTOR, "div.ux-image-carousel-item.image-treatment.active.image img")
+      src = main_image.get_attribute('src')
 
-![Screenshot 2023-08-29 at 3 34 20 PM](https://github.com/SACUCD/SoccerOffsideTracker/assets/54915593/997e5746-d37a-40d5-bad7-ed487c5488ac)
-***The smaller square represents the box used to determine the jersey color***
+      # Download the image content
+      response = requests.get(src)
+      if response.status_code == 200:
+          # Load the image content into an object that PIL can open
+          image = Image.open(BytesIO(response.content)).convert('RGB')
+          img_name = f"Lot{idx+1}"
+          items[img_name] = [image, listing_href]
+
+      # Go back to the search results page before proceeding to the next listing
+      cls.driver.back()
+
+  # Close the WebDriver
+  cls.driver.quit()
+  return items
+```
+
+## Individual Hat Detection
+Inorder to detect individual hats from a bulk lot image, the yolov8 object detection model was augemnted with labeled images of hats. If the algorithm detects hats with a confidece level of above 65%, a bounding box is drawn with the predicted coordinates. 
+
+![Screenshot 2023-08-29 at 3 30 41 PM](https://drive.google.com/uc?export=view&id=1rD8wMS-SUPzpRM02LOuMalEcYL1m0cdZ
+)
 
 ## Estimating the Price of Individual Hats
-The most important part of this project is implementing perspective transform to get information on the actual distance down the field players are. This information is crucial for making offside determinations.
+After obtaining the images of individual hats from bulk lot imgaes, Ebay's image search API was used to find live listings of similar hats to each invidual hat. The first ten results of each search were used to estimate the potential selling price of the hat. The estimate was calculated by taking the first ten results' listing price, eliminating the outliers (outisde 1.5 IQR), and average the remaining results.  
 
-- Uses OpenCV's perspective transform
-- Passes in each players furthest positioning (including any head, body, and feet) and places it on a 2D map of the field
-- Determines who is nearest to the goal line and highlights that player
+```py
+class PriceFinder:
 
-![Screenshot 2023-08-29 at 3 40 22 PM](https://github.com/SACUCD/SoccerOffsideTracker/assets/54915593/8b7bf324-b535-41a2-838f-3d49c8eca171)
-***The red dots represents the points used for transforming the perspective***
+    with open("config.yaml", 'r') as file:
+        config = yaml.safe_load(file)
+
+    # Replace these with your actual eBay API credentials
+    CLIENT_ID = config['client_id']
+    CLIENT_SECRET = config['client_secret']
+    OAUTH_TOKEN = config['oauth_token']
+
+    # eBay Browse API endpoint for image search
+    API_ENDPOINT = 'https://api.ebay.com/buy/browse/v1/item_summary/search_by_image?&limit=10&conditions=USED'
+
+    # Path to your image file
+    IMAGE_PATH = '/Users/varunwadhwa/Desktop/ebayScrapper2/image4.png'
+
+    # Prepare the headers
+    headers = {
+        'Authorization': f'Bearer {OAUTH_TOKEN}',
+        'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
+        'X-EBAY-C-ENDUSERCTX': 'affiliateCampaignId=<ePNCampaignId>,affiliateReferenceId=<referenceId>',
+        'Content-Type': 'application/json'
+        
+    }
+    filters = 'sold:true,conditions:USED'
+
+
+    @classmethod
+    def mean_without_outliers(cls, data):
+        import numpy as np
+        
+        # Calculate Q1 (25th percentile) and Q3 (75th percentile)
+        Q1 = np.percentile(data, 25)
+        Q3 = np.percentile(data, 75)
+        
+        # Calculate the Interquartile Range (IQR)
+        IQR = Q3 - Q1
+        
+        # Define outliers as those outside of Q1 - 1.5 * IQR and Q3 + 1.5 * IQR
+        lower_bound = Q1 - 1.5 * IQR
+        upper_bound = Q3 + 1.5 * IQR
+        
+        # Filter out outliers and calculate the mean of the remaining data
+        filtered_data = [x for x in data if lower_bound <= x <= upper_bound]
+        
+        # Return the mean of the filtered data
+        if filtered_data:  # Check if the list is not empty
+            return np.mean(filtered_data)
+        else:
+            return None  # Return None if all data are outliers or list is empty
+
+    @classmethod
+    def find_prices(cls, img):
+        prices = []
+        # Prepare the payload with the base64-encoded image
+        payload = {
+            'image': base64.b64encode(img).decode('utf-8')
+        }
+
+        # Make the POST request to the eBay API
+        response = requests.post(cls.API_ENDPOINT, headers=cls.headers, json=payload)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            # Parse the response data
+            items = response.json()
+            # Check if any items found
+            if 'itemSummaries' in items and len(items['itemSummaries']) > 0:
+                for item in items['itemSummaries']:
+                    prices.append(float(item['price']['value']))
+                return cls.mean_without_outliers(prices)
+            else:
+                print("No items found.")
+        else:
+            print("Failed to search by image. Status code:", response.status_code, "Response:", response.text)
+```
 
 # 🪴 Areas of Improvement
 - Reliability: The project could always have higher accuracy and reliability in offside decisions. It is only as accurate as the points it is given for perspective transform.
